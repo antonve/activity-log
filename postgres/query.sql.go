@@ -10,7 +10,7 @@ import (
 )
 
 const listLogs = `-- name: ListLogs :many
-select id, content, created_at, updated_at, deleted_at from logs
+select id, content, category, done_at from logs
 order by created_at desc
 `
 
@@ -26,9 +26,8 @@ func (q *Queries) ListLogs(ctx context.Context) ([]Log, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.Content,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.DeletedAt,
+			&i.Category,
+			&i.DoneAt,
 		); err != nil {
 			return nil, err
 		}

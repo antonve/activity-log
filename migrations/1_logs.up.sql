@@ -1,8 +1,6 @@
 create table logs (
   id bigserial primary key,
   content text not null,
-
-  created_at timestamp not null default now(),
-  updated_at timestamp not null default now(),
-  deleted_at timestamp default NULL
+  category varchar(255) not null,
+  done_at date not null default current_date
 );

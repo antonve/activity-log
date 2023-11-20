@@ -4,13 +4,22 @@ import (
 	"database/sql"
 	"fmt"
 	"net/http"
+	"time"
 
+	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
 )
+
+type Log struct {
+	ID       uuid.UUID `json:"id"`
+	Content  string    `json:"content"`
+	Category string    `json:"category"`
+	DoneAt   time.Time `json:"done_at"`
+}
 
 func main() {
 	cfg := Config{}
@@ -29,6 +38,15 @@ func main() {
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
+	})
+
+	e.POST("/logs", func(c echo.Context) error {
+		l := &Log{}
+		if err := c.Bind(l); err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusCreated, l)
 	})
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cfg.Port)))

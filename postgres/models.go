@@ -5,14 +5,12 @@
 package postgres
 
 import (
-	"database/sql"
 	"time"
 )
 
 type Log struct {
-	ID        int64
-	Content   string
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt sql.NullTime
+	ID       int64
+	Content  string
+	Category string
+	DoneAt   time.Time
 }
