@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/antonve/activity-log/postgres"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/kelseyhightower/envconfig"
@@ -16,10 +17,10 @@ import (
 )
 
 type Log struct {
-	ID       uuid.UUID `json:"id"`
-	Content  string    `json:"content"`
-	Category string    `json:"category"`
-	DoneAt   time.Time `json:"done_at"`
+	ID       uuid.UUID `json:"id" validate:"required"`
+	Content  string    `json:"content" validate:"required"`
+	Category string    `json:"category" validate:"required"`
+	DoneAt   time.Time `json:"done_at" validate:"required"`
 }
 
 func main() {
@@ -30,6 +31,7 @@ func main() {
 	}
 
 	psql := postgres.New(initPostgres(cfg))
+	validate := validator.New()
 
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
@@ -44,6 +46,10 @@ func main() {
 	e.POST("/logs", func(c echo.Context) error {
 		l := &Log{}
 		if err := c.Bind(l); err != nil {
+			return err
+		}
+
+		if err := validate.Struct(l); err != nil {
 			return err
 		}
 
