@@ -47,6 +47,15 @@ func main() {
 		return c.NoContent(http.StatusOK)
 	})
 
+	e.GET("/logs/:id", func(c echo.Context) error {
+		log, err := psql.GetLog(c.Request().Context(), uuid.MustParse(c.Param("id")))
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, log)
+	})
+
 	e.GET("/logs", func(c echo.Context) error {
 		logs, err := psql.ListLogs(c.Request().Context())
 		if err != nil {

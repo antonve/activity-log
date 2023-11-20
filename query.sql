@@ -2,6 +2,10 @@
 select * from logs
 order by done_at desc;
 
+-- name: GetLog :one
+select * from logs
+where id = sqlc.arg('id');
+
 -- name: CreateLog :exec
 insert into logs
 (id, content, category, done_at)

@@ -35,6 +35,23 @@ func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) error {
 	return err
 }
 
+const getLog = `-- name: GetLog :one
+select id, content, category, done_at from logs
+where id = $1
+`
+
+func (q *Queries) GetLog(ctx context.Context, id uuid.UUID) (Log, error) {
+	row := q.db.QueryRowContext(ctx, getLog, id)
+	var i Log
+	err := row.Scan(
+		&i.ID,
+		&i.Content,
+		&i.Category,
+		&i.DoneAt,
+	)
+	return i, err
+}
+
 const listLogs = `-- name: ListLogs :many
 select id, content, category, done_at from logs
 order by done_at desc
