@@ -29,3 +29,7 @@ export const useLogsList = () =>
 
     return LogList.parse(await response.json())
   })
+
+export function toIsoDate(d: Date) {
+  return d.toISOString().split('T')[0]
+}
