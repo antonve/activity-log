@@ -48,6 +48,16 @@ func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) (Log, erro
 	return i, err
 }
 
+const deleteLog = `-- name: DeleteLog :exec
+delete from logs
+where id = $1
+`
+
+func (q *Queries) DeleteLog(ctx context.Context, id uuid.UUID) error {
+	_, err := q.db.ExecContext(ctx, deleteLog, id)
+	return err
+}
+
 const getLog = `-- name: GetLog :one
 select id, content, category, done_at from logs
 where id = $1

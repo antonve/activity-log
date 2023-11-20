@@ -6,6 +6,10 @@ order by done_at desc;
 select * from logs
 where id = sqlc.arg('id');
 
+-- name: DeleteLog :exec
+delete from logs
+where id = sqlc.arg('id');
+
 -- name: CreateLog :one
 insert into logs
 (id, content, category, done_at)

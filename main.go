@@ -66,6 +66,15 @@ func main() {
 		return c.NoContent(http.StatusOK)
 	})
 
+	e.DELETE("/logs/:id", func(c echo.Context) error {
+		err := psql.DeleteLog(c.Request().Context(), uuid.MustParse(c.Param("id")))
+		if err != nil {
+			return err
+		}
+
+		return c.NoContent(http.StatusOK)
+	})
+
 	e.GET("/logs/:id", func(c echo.Context) error {
 		log, err := psql.GetLog(c.Request().Context(), uuid.MustParse(c.Param("id")))
 		if err != nil {
