@@ -4,6 +4,7 @@ import { NewLogSchema, toIsoDate, useCreateLog } from './domain'
 import { useQueryClient } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { PlusIcon } from '@heroicons/react/24/solid'
 
 const initLog = () => ({
   category: '',
@@ -67,7 +68,10 @@ export default function NewLogForm({ enabled }: { enabled: boolean }) {
           placeholder="What did you do?"
           {...register('content')}
         />
-        <button>Add</button>
+        <button>
+          <PlusIcon className="w-5 h-5" />
+          Add
+        </button>
       </div>
     </form>
   )

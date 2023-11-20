@@ -1,6 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
+  '@heroicons/react': ^2.0.18
   '@hookform/resolvers': ^3.3.2
   '@types/node': ^20
   '@types/react': ^18
@@ -21,6 +22,7 @@ specifiers:
   zod: ^3.22.4
 
 dependencies:
+  '@heroicons/react': 2.0.18_react@18.2.0
   '@hookform/resolvers': 3.3.2_react-hook-form@7.48.2
   next: 14.0.3_biqbaboplfbrettd7655fr4n2y
   react: 18.2.0
@@ -96,6 +98,14 @@ packages:
     resolution: {integrity: sha512-ut5V+D+fOoWPgGGNj83GGjnntO39xDy6DWxO0wb7Jp3DcMX0TfIqdzHF85VTQkerdyGmuuMD9AKAo5KiNlf/AQ==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@heroicons/react/2.0.18_react@18.2.0:
+    resolution: {integrity: sha512-7TyMjRrZZMBPa+/5Y8lN0iyvUU/01PeMGX2+RE7cQWpEUIcb4QotzUObFkJDejj/HUH4qjP/eQ0gzzKs2f+6Yw==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /@hookform/resolvers/3.3.2_react-hook-form@7.48.2:
     resolution: {integrity: sha512-Tw+GGPnBp+5DOsSg4ek3LCPgkBOuOgS5DsDV7qsWNH9LZc433kgsWICjlsh2J9p04H2K66hsXPPb9qn9ILdUtA==}

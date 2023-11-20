@@ -2,8 +2,9 @@
 
 import { Log, NewLogSchema, toIsoDate, useCreateLog } from './domain'
 import { useQueryClient } from 'react-query'
-import { set, useForm } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/solid'
 
 export default function LogRow({
   log,
@@ -22,7 +23,6 @@ export default function LogRow({
     <div
       key={log.id}
       className="flex border-b border-slate-100 even:bg-slate-50"
-      onDoubleClick={() => setEditingEnabled(true)}
     >
       <div className="w-32 px-4 py-2 whitespace-nowrap flex items-center">
         {toIsoDate(log.done_at)}
@@ -30,7 +30,12 @@ export default function LogRow({
       <div className="w-20 py-2 flex items-center">
         <span className="rounded bg-stone-300 px-2 py-1">{log.category}</span>
       </div>
-      <div className="px-4 py-2 flex items-center">{log.content}</div>
+      <div className="px-4 py-2 flex-grow flex space-x-2 items-center">
+        <div className="flex-grow">{log.content}</div>
+        <a href="#" onClick={() => setEditingEnabled(true)}>
+          <PencilSquareIcon className="w-5 h-5" />
+        </a>
+      </div>
     </div>
   )
 }
@@ -48,7 +53,11 @@ function EditLogForm({
     formState: { errors },
   } = useForm({
     resolver: zodResolver(NewLogSchema),
-    defaultValues: log,
+    defaultValues: {
+      category: log.category,
+      content: log.content,
+      done_at: toIsoDate(log.done_at),
+    },
   })
 
   const queryClient = useQueryClient()
@@ -61,7 +70,6 @@ function EditLogForm({
     <form
       className={`flex border-b border-slate-100 even:bg-slate-50`}
       onSubmit={handleSubmit(updatedLog => {
-        debugger
         createLog.mutate({
           payload: NewLogSchema.parse(updatedLog),
           id: log.id,
@@ -97,7 +105,15 @@ function EditLogForm({
           placeholder="What did you do?"
           {...register('content')}
         />
-        <button>Update</button>
+        <button>
+          <PencilSquareIcon className="w-5 h-5" /> Update
+        </button>
+        <button
+          className="bg-transparent"
+          onClick={() => setEditingEnabled(false)}
+        >
+          <XMarkIcon className="w-5 h-5" /> Cancel
+        </button>
       </div>
     </form>
   )

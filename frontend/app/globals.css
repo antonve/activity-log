@@ -9,6 +9,10 @@
   }
 
   button {
-    @apply px-4 py-1 font-bold border border-slate-400 bg-slate-200 rounded;
+    @apply px-2 py-1 font-bold border border-slate-400 bg-slate-200 rounded flex items-center uppercase text-sm;
+  }
+
+  button > svg {
+    @apply mr-2;
   }
 }
