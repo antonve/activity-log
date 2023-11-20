@@ -24,7 +24,26 @@ type Log struct {
 }
 
 type LogList struct {
-	Logs []postgres.Log `json:"logs"`
+	Logs []Log `json:"logs"`
+}
+
+func toLog(log postgres.Log) Log {
+	return Log{
+		ID:       log.ID,
+		Content:  log.Content,
+		Category: log.Category,
+		DoneAt:   log.DoneAt,
+	}
+}
+
+func toLogs(logs []postgres.Log) []Log {
+	newLogs := make([]Log, len(logs))
+
+	for i, log := range logs {
+		newLogs[i] = toLog(log)
+	}
+
+	return newLogs
 }
 
 func main() {
@@ -63,7 +82,7 @@ func main() {
 		}
 
 		return c.JSON(http.StatusOK, LogList{
-			Logs: logs,
+			Logs: toLogs(logs),
 		})
 	})
 
