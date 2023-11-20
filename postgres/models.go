@@ -6,10 +6,12 @@ package postgres
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Log struct {
-	ID       int64
+	ID       uuid.UUID
 	Content  string
 	Category string
 	DoneAt   time.Time

@@ -7,7 +7,33 @@ package postgres
 
 import (
 	"context"
+	"time"
+
+	"github.com/google/uuid"
 )
+
+const createLog = `-- name: CreateLog :exec
+insert into logs
+(id, content, category, done_at)
+values ($1, $2, $3, $4)
+`
+
+type CreateLogParams struct {
+	ID       uuid.UUID
+	Content  string
+	Category string
+	DoneAt   time.Time
+}
+
+func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) error {
+	_, err := q.db.ExecContext(ctx, createLog,
+		arg.ID,
+		arg.Content,
+		arg.Category,
+		arg.DoneAt,
+	)
+	return err
+}
 
 const listLogs = `-- name: ListLogs :many
 select id, content, category, done_at from logs

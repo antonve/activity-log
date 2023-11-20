@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/antonve/activity-log/postgres"
 	"github.com/google/uuid"
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/kelseyhightower/envconfig"
@@ -28,7 +29,7 @@ func main() {
 		panic(err)
 	}
 
-	_ = initPostgres(cfg)
+	psql := postgres.New(initPostgres(cfg))
 
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
@@ -45,6 +46,13 @@ func main() {
 		if err := c.Bind(l); err != nil {
 			return err
 		}
+
+		psql.CreateLog(c.Request().Context(), postgres.CreateLogParams{
+			ID:       l.ID,
+			Content:  l.Content,
+			Category: l.Category,
+			DoneAt:   l.DoneAt,
+		})
 
 		return c.JSON(http.StatusCreated, l)
 	})
