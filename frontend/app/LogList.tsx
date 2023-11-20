@@ -18,28 +18,26 @@ export default function LogList() {
   }
 
   return (
-    <table className="w-full">
-      <tbody>
-        {activeLogId === undefined ? <NewLog /> : null}
-        {logs.data.logs.map(log => (
-          <tr
-            key={log.id}
-            className="border-b border-slate-100"
-            onDoubleClick={() => setActiveLogId(log.id)}
-          >
-            <td className="w-20 px-4 py-2 whitespace-nowrap">
-              {toIsoDate(log.done_at)}
-            </td>
-            <td className="w-16">
-              <span className="rounded bg-stone-300 px-2 py-1">
-                {log.category}
-              </span>
-            </td>
-            <td className="px-4 py-2">{log.content}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className="w-full">
+      <NewLog enabled={activeLogId === undefined} />
+      {logs.data.logs.map(log => (
+        <div
+          key={log.id}
+          className="flex border-b border-slate-100"
+          onDoubleClick={() => setActiveLogId(log.id)}
+        >
+          <div className="w-32 px-4 py-2 whitespace-nowrap">
+            {toIsoDate(log.done_at)}
+          </div>
+          <div className="w-20 py-2">
+            <span className="rounded bg-stone-300 px-2 py-1">
+              {log.category}
+            </span>
+          </div>
+          <div className="px-4 py-2">{log.content}</div>
+        </div>
+      ))}
+    </div>
   )
 }
 
@@ -50,12 +48,16 @@ const initLog = () => ({
   done_at: toIsoDate(new Date()),
 })
 
-function NewLog() {
+function NewLog({ enabled }: { enabled: boolean }) {
   const [log, setLog] = useState(initLog)
 
   return (
-    <tr>
-      <td className="w-20 px-2 py-2 whitespace-nowrap">
+    <div
+      className={`flex ${
+        enabled ? '' : 'pointer-events-none select-none opacity-40'
+      }`}
+    >
+      <div className="w-32 px-2 py-2 whitespace-nowrap">
         <input
           type="text"
           placeholder="Done date"
@@ -63,8 +65,8 @@ function NewLog() {
           onChange={e => setLog({ ...log, done_at: e.currentTarget.value })}
           className="w-full"
         />
-      </td>
-      <td className="w-16 py-2">
+      </div>
+      <div className="w-20 py-2">
         <input
           type="text"
           placeholder="Category"
@@ -72,8 +74,8 @@ function NewLog() {
           value={log.category}
           onChange={e => setLog({ ...log, category: e.currentTarget.value })}
         />
-      </td>
-      <td className="px-2 py-2 flex space-x-2">
+      </div>
+      <div className="px-2 py-2 flex space-x-2 flex-grow">
         <input
           type="text"
           className="w-full"
@@ -81,8 +83,8 @@ function NewLog() {
           value={log.content}
           onChange={e => setLog({ ...log, content: e.currentTarget.value })}
         />
-        <button>Save</button>
-      </td>
-    </tr>
+        <button>Add</button>
+      </div>
+    </div>
   )
 }
