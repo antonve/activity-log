@@ -21,7 +21,7 @@ update set
   content = $2,
   category = $3,
   done_at = $4
-returning id, content, category, done_at
+returning id, content, category, done_at, created_at
 `
 
 type CreateLogParams struct {
@@ -44,6 +44,7 @@ func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) (Log, erro
 		&i.Content,
 		&i.Category,
 		&i.DoneAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }
@@ -59,7 +60,7 @@ func (q *Queries) DeleteLog(ctx context.Context, id uuid.UUID) error {
 }
 
 const getLog = `-- name: GetLog :one
-select id, content, category, done_at from logs
+select id, content, category, done_at, created_at from logs
 where id = $1
 `
 
@@ -71,13 +72,14 @@ func (q *Queries) GetLog(ctx context.Context, id uuid.UUID) (Log, error) {
 		&i.Content,
 		&i.Category,
 		&i.DoneAt,
+		&i.CreatedAt,
 	)
 	return i, err
 }
 
 const listLogs = `-- name: ListLogs :many
-select id, content, category, done_at from logs
-order by done_at desc
+select id, content, category, done_at, created_at from logs
+order by done_at desc, created_at desc
 `
 
 func (q *Queries) ListLogs(ctx context.Context) ([]Log, error) {
@@ -94,6 +96,7 @@ func (q *Queries) ListLogs(ctx context.Context) ([]Log, error) {
 			&i.Content,
 			&i.Category,
 			&i.DoneAt,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}

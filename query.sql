@@ -1,6 +1,6 @@
 -- name: ListLogs :many
 select * from logs
-order by done_at desc;
+order by done_at desc, created_at desc;
 
 -- name: GetLog :one
 select * from logs

@@ -2,17 +2,45 @@
 
 import { Log, NewLogSchema, toIsoDate, useCreateLog } from './domain'
 import { useQueryClient } from 'react-query'
-import { useForm } from 'react-hook-form'
+import { set, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 export default function LogRow({
   log,
   editingEnabled,
-  enableEditing,
+  setEditingEnabled,
 }: {
   log: Log
   editingEnabled: boolean
-  enableEditing: () => void
+  setEditingEnabled: (enabled: boolean) => void
+}) {
+  if (editingEnabled) {
+    return <EditLogForm log={log} setEditingEnabled={setEditingEnabled} />
+  }
+
+  return (
+    <div
+      key={log.id}
+      className="flex border-b border-slate-100 even:bg-slate-50"
+      onDoubleClick={() => setEditingEnabled(true)}
+    >
+      <div className="w-32 px-4 py-2 whitespace-nowrap flex items-center">
+        {toIsoDate(log.done_at)}
+      </div>
+      <div className="w-20 py-2 flex items-center">
+        <span className="rounded bg-stone-300 px-2 py-1">{log.category}</span>
+      </div>
+      <div className="px-4 py-2 flex items-center">{log.content}</div>
+    </div>
+  )
+}
+
+function EditLogForm({
+  log,
+  setEditingEnabled,
+}: {
+  log: Log
+  setEditingEnabled: (enabled: boolean) => void
 }) {
   const {
     register,
@@ -26,31 +54,18 @@ export default function LogRow({
   const queryClient = useQueryClient()
   const createLog = useCreateLog(() => {
     queryClient.invalidateQueries('logs')
+    setEditingEnabled(false)
   })
-
-  if (!editingEnabled) {
-    return (
-      <div
-        key={log.id}
-        className="flex border-b border-slate-100 even:bg-slate-50"
-        onDoubleClick={enableEditing}
-      >
-        <div className="w-32 px-4 py-2 whitespace-nowrap flex items-center">
-          {toIsoDate(log.done_at)}
-        </div>
-        <div className="w-20 py-2 flex items-center">
-          <span className="rounded bg-stone-300 px-2 py-1">{log.category}</span>
-        </div>
-        <div className="px-4 py-2 flex items-center">{log.content}</div>
-      </div>
-    )
-  }
 
   return (
     <form
       className={`flex border-b border-slate-100 even:bg-slate-50`}
-      onSubmit={handleSubmit(log => {
-        createLog.mutate({ payload: NewLogSchema.parse(log), id: log.id })
+      onSubmit={handleSubmit(updatedLog => {
+        debugger
+        createLog.mutate({
+          payload: NewLogSchema.parse(updatedLog),
+          id: log.id,
+        })
       })}
     >
       <div className="w-32 px-2 py-2 whitespace-nowrap">

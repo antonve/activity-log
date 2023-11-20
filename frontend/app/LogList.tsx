@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { toIsoDate, useLogsList } from './domain'
+import { useLogsList } from './domain'
 import NewLogForm from './NewLogForm'
 import LogRow from './LogRow'
 
@@ -25,7 +25,10 @@ export default function LogList() {
         <LogRow
           log={log}
           editingEnabled={log.id === activeLogId}
-          enableEditing={() => setActiveLogId(log.id)}
+          setEditingEnabled={enabled =>
+            setActiveLogId(enabled ? log.id : undefined)
+          }
+          key={log.id}
         />
       ))}
     </div>

@@ -11,8 +11,9 @@ import (
 )
 
 type Log struct {
-	ID       uuid.UUID
-	Content  string
-	Category string
-	DoneAt   time.Time
+	ID        uuid.UUID
+	Content   string
+	Category  string
+	DoneAt    time.Time
+	CreatedAt time.Time
 }
