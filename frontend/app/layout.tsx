@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import QueryProvider from './QueryProvider'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,12 +16,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <header className="border-b border-gray-200 py-6 px-4 bg-slate-100">
-          <h1 className="font-bold text-lg">Activity</h1>
-        </header>
-        {children}
-      </body>
+      <QueryProvider>
+        <body className={inter.className}>{children}</body>
+      </QueryProvider>
     </html>
   )
 }
