@@ -1,10 +1,20 @@
 'use client'
 
-import { Log, NewLogSchema, toIsoDate, useCreateLog } from './domain'
+import {
+  Log,
+  NewLogSchema,
+  toIsoDate,
+  useCreateLog,
+  useDeleteLog,
+} from './domain'
 import { useQueryClient } from 'react-query'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { PencilSquareIcon, XMarkIcon } from '@heroicons/react/24/solid'
+import {
+  PencilSquareIcon,
+  TrashIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/solid'
 
 export default function LogRow({
   log,
@@ -15,8 +25,19 @@ export default function LogRow({
   editingEnabled: boolean
   setEditingEnabled: (enabled: boolean) => void
 }) {
+  const queryClient = useQueryClient()
+  const deleteLog = useDeleteLog(() => {
+    queryClient.invalidateQueries('logs')
+  })
+
   if (editingEnabled) {
     return <EditLogForm log={log} setEditingEnabled={setEditingEnabled} />
+  }
+
+  const confirmDeleteLog = () => {
+    if (window.confirm(`Are you sure you want to delete: ${log.content}`)) {
+      deleteLog.mutate({ id: log.id })
+    }
   }
 
   return (
@@ -30,10 +51,13 @@ export default function LogRow({
       <div className="w-20 py-2 flex items-center">
         <span className="rounded bg-stone-300 px-2 py-1">{log.category}</span>
       </div>
-      <div className="px-4 py-2 flex-grow flex space-x-2 items-center">
+      <div className="px-4 py-2 flex-grow flex space-x-4 items-center">
         <div className="flex-grow">{log.content}</div>
         <a href="#" onClick={() => setEditingEnabled(true)}>
           <PencilSquareIcon className="w-5 h-5" />
+        </a>
+        <a href="#" onClick={confirmDeleteLog}>
+          <TrashIcon className="w-5 h-5 text-red-500" />
         </a>
       </div>
     </div>

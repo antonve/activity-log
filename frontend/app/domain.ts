@@ -72,3 +72,21 @@ export const useCreateLog = (onSuccess: () => void) =>
       onSuccess()
     },
   })
+
+export const useDeleteLog = (onSuccess: () => void) =>
+  useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      const response = await fetch(`${root}/logs/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      if (response.status !== 200) {
+        throw new Error(response.status.toString())
+      }
+
+      return
+    },
+    onSuccess,
+  })
