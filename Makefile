@@ -5,7 +5,7 @@ init:
 generate: generate_sql
 
 generate_sql:
-	cd postgres; go generate
+	go generate
 
 migrate:
 	MIGRATION_ARGS="up" make migrate_docker
