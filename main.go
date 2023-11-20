@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 
@@ -17,6 +18,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+
+	_ = initPostgres(cfg)
 
 	e := echo.New()
 	e.Logger.SetLevel(log.DEBUG)
@@ -41,4 +44,22 @@ type Config struct {
 	}
 
 	Port int `required:"true"`
+}
+
+func initPostgres(config Config) *sql.DB {
+	cfg := &config.Postgres
+	conn := fmt.Sprintf(
+		"host=%s user=%s dbname=%s password=%s sslmode=%s",
+		cfg.Host,
+		cfg.Username,
+		cfg.Database,
+		cfg.Password,
+		cfg.SSLMode,
+	)
+	psql, err := sql.Open("pgx", conn)
+	if err != nil {
+		panic(fmt.Errorf("failed opening connection to postgres: %v", err))
+	}
+
+	return psql
 }
