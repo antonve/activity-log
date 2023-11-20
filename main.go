@@ -77,14 +77,17 @@ func main() {
 			return err
 		}
 
-		psql.CreateLog(c.Request().Context(), postgres.CreateLogParams{
+		log, err := psql.CreateLog(c.Request().Context(), postgres.CreateLogParams{
 			ID:       l.ID,
 			Content:  l.Content,
 			Category: l.Category,
 			DoneAt:   l.DoneAt,
 		})
+		if err != nil {
+			return err
+		}
 
-		return c.JSON(http.StatusCreated, l)
+		return c.JSON(http.StatusCreated, log)
 	})
 
 	e.Logger.Fatal(e.Start(fmt.Sprintf(":%d", cfg.Port)))

@@ -12,10 +12,16 @@ import (
 	"github.com/google/uuid"
 )
 
-const createLog = `-- name: CreateLog :exec
+const createLog = `-- name: CreateLog :one
 insert into logs
 (id, content, category, done_at)
 values ($1, $2, $3, $4)
+on conflict (id) do
+update set
+  content = $2,
+  category = $3,
+  done_at = $4
+returning id, content, category, done_at
 `
 
 type CreateLogParams struct {
@@ -25,14 +31,21 @@ type CreateLogParams struct {
 	DoneAt   time.Time
 }
 
-func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) error {
-	_, err := q.db.ExecContext(ctx, createLog,
+func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) (Log, error) {
+	row := q.db.QueryRowContext(ctx, createLog,
 		arg.ID,
 		arg.Content,
 		arg.Category,
 		arg.DoneAt,
 	)
-	return err
+	var i Log
+	err := row.Scan(
+		&i.ID,
+		&i.Content,
+		&i.Category,
+		&i.DoneAt,
+	)
+	return i, err
 }
 
 const getLog = `-- name: GetLog :one
