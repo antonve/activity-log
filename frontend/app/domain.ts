@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from 'react-query'
+import { v4 } from 'uuid'
 import { z } from 'zod'
 
 // TODO: configure config
@@ -34,21 +35,32 @@ export function toIsoDate(d: Date) {
   return d.toISOString().split('T')[0]
 }
 
+export const NewLogSchema = z.object({
+  content: z.string().min(1),
+  category: z.string().min(1),
+  done_at: z.coerce.date(),
+})
+
+export type NewLogSchema = z.infer<typeof NewLogSchema>
+
 export const useCreateLog = (onSuccess: () => void) =>
   useMutation({
-    mutationFn: async (payload: Log) => {
+    mutationFn: async (payload: NewLogSchema) => {
       const response = await fetch(`${root}/logs`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          ...payload,
+          id: v4(),
+        }),
       })
-      if (response.status !== 200) {
+      if (response.status !== 201) {
         throw new Error(response.status.toString())
       }
 
-      return Log.parse(await response.json())
+      return
     },
     onSuccess() {
       onSuccess()

@@ -1,9 +1,18 @@
 'use client'
 
 import { useState } from 'react'
-import { Log, toIsoDate, useCreateLog, useLogsList } from './domain'
+import {
+  Log,
+  NewLogSchema,
+  toIsoDate,
+  useCreateLog,
+  useLogsList,
+} from './domain'
 import { v4 } from 'uuid'
 import { useQueryClient } from 'react-query'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
 
 export default function LogList() {
   const logs = useLogsList()
@@ -43,18 +52,26 @@ export default function LogList() {
 }
 
 const initLog = () => ({
-  id: v4(),
   category: '',
   content: '',
   done_at: toIsoDate(new Date()),
 })
 
 function NewLog({ enabled }: { enabled: boolean }) {
-  const [log, setLog] = useState(initLog)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(NewLogSchema),
+    defaultValues: initLog(),
+  })
+
   const queryClient = useQueryClient()
   const createLog = useCreateLog(() => {
-    queryClient.refetchQueries()
-    setLog(initLog())
+    queryClient.invalidateQueries('logs')
+    reset(initLog())
   })
 
   return (
@@ -63,38 +80,38 @@ function NewLog({ enabled }: { enabled: boolean }) {
       className={`flex ${
         enabled ? '' : 'pointer-events-none select-none opacity-40'
       }`}
-      onSubmit={e => {
-        e.preventDefault()
-
-        const newLog = Log.parse(log)
-        createLog.mutate(newLog)
-      }}
+      onSubmit={handleSubmit(log => {
+        createLog.mutate(NewLogSchema.parse(log))
+      })}
     >
       <div className="w-32 px-2 py-2 whitespace-nowrap">
         <input
           type="text"
           placeholder="Done date"
-          value={log.done_at}
-          onChange={e => setLog({ ...log, done_at: e.currentTarget.value })}
-          className="w-full"
+          className={`w-full ${
+            errors.done_at ? 'outline-2 outline-red-500' : ''
+          }`}
+          {...register('done_at')}
         />
       </div>
       <div className="w-20 py-2">
         <input
           type="text"
           placeholder="Category"
-          className="w-full"
-          value={log.category}
-          onChange={e => setLog({ ...log, category: e.currentTarget.value })}
+          className={`w-full ${
+            errors.category ? 'outline-2 outline-red-500' : ''
+          }`}
+          {...register('category')}
         />
       </div>
       <div className="px-2 py-2 flex space-x-2 flex-grow">
         <input
           type="text"
-          className="w-full"
+          className={`w-full ${
+            errors.content ? 'outline-2 outline-red-500' : ''
+          }`}
           placeholder="What did you do?"
-          value={log.content}
-          onChange={e => setLog({ ...log, content: e.currentTarget.value })}
+          {...register('content')}
         />
         <button>Add</button>
       </div>
