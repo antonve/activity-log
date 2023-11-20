@@ -1,0 +1,48 @@
+version: "3"
+
+services:
+  api:
+    container_name: api
+    build: .
+    ports:
+      - 8080:8080
+    volumes:
+      - .:/app
+    environment:
+      # PostgreSQL
+      API_POSTGRES_HOST: "postgres"
+      API_POSTGRES_USERNAME: "root"
+      API_POSTGRES_PASSWORD: "hunter2"
+      API_POSTGRES_DATABASE: "activitylog"
+      API_POSTGRES_SSLMODE: "disable"
+      API_PORT: 8080
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: hunter2
+      POSTGRES_DB: activitylog
+    logging:
+      driver: none
+  migrate:
+    build: ./migrations
+    depends_on:
+      - postgres
+    command: ["up"]
+    environment:
+      DATABASE_URL: postgres://root:hunter2@postgres:5432/activitylog?sslmode=disable
+      MIGRATIONS_DIR: /migrations
+      WAIT_HOSTS: postgres:5432
+    volumes:
+      - ./migrations:/migrations
+  pgweb:
+    container_name: pgweb
+    image: sosedoff/pgweb
+    ports:
+      - "8081:8081"
+    links:
+      - postgres:postgres
+    environment:
+      - DATABASE_URL=postgres://root:hunter2@postgres:5432/activitylog?sslmode=disable
+    depends_on:
+      - postgres

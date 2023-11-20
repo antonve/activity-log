@@ -1,4 +1,4 @@
-module github.com/antonve/activity-log/server
+module github.com/antonve/activity-log
 
 go 1.19
 
