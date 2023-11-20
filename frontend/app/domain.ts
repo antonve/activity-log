@@ -45,7 +45,13 @@ export type NewLogSchema = z.infer<typeof NewLogSchema>
 
 export const useCreateLog = (onSuccess: () => void) =>
   useMutation({
-    mutationFn: async (payload: NewLogSchema) => {
+    mutationFn: async ({
+      payload,
+      id,
+    }: {
+      payload: NewLogSchema
+      id?: string
+    }) => {
       const response = await fetch(`${root}/logs`, {
         method: 'POST',
         headers: {
@@ -53,7 +59,7 @@ export const useCreateLog = (onSuccess: () => void) =>
         },
         body: JSON.stringify({
           ...payload,
-          id: v4(),
+          id: id ?? v4(),
         }),
       })
       if (response.status !== 201) {
