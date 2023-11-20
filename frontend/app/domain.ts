@@ -6,8 +6,8 @@ const root = `http://localhost:8080`
 
 export const Log = z.object({
   id: z.string(),
-  content: z.string(),
-  category: z.string(),
+  content: z.string().min(1),
+  category: z.string().min(1),
   done_at: z.coerce.date(),
 })
 

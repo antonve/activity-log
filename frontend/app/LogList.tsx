@@ -1,8 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { toIsoDate, useLogsList } from './domain'
+import { Log, toIsoDate, useCreateLog, useLogsList } from './domain'
 import { v4 } from 'uuid'
+import { useQueryClient } from 'react-query'
 
 export default function LogList() {
   const logs = useLogsList()
@@ -50,12 +51,24 @@ const initLog = () => ({
 
 function NewLog({ enabled }: { enabled: boolean }) {
   const [log, setLog] = useState(initLog)
+  const queryClient = useQueryClient()
+  const createLog = useCreateLog(() => {
+    queryClient.refetchQueries()
+    setLog(initLog())
+  })
 
   return (
-    <div
+    <form
+      aria-disabled={!enabled}
       className={`flex ${
         enabled ? '' : 'pointer-events-none select-none opacity-40'
       }`}
+      onSubmit={e => {
+        e.preventDefault()
+
+        const newLog = Log.parse(log)
+        createLog.mutate(newLog)
+      }}
     >
       <div className="w-32 px-2 py-2 whitespace-nowrap">
         <input
@@ -85,6 +98,6 @@ function NewLog({ enabled }: { enabled: boolean }) {
         />
         <button>Add</button>
       </div>
-    </div>
+    </form>
   )
 }
