@@ -23,6 +23,10 @@ type Log struct {
 	DoneAt   time.Time `json:"done_at" validate:"required"`
 }
 
+type LogList struct {
+	Logs []postgres.Log `json:"logs"`
+}
+
 func main() {
 	cfg := Config{}
 	err := envconfig.Process("API", &cfg)
@@ -41,6 +45,17 @@ func main() {
 
 	e.GET("/health", func(c echo.Context) error {
 		return c.NoContent(http.StatusOK)
+	})
+
+	e.GET("/logs", func(c echo.Context) error {
+		logs, err := psql.ListLogs(c.Request().Context())
+		if err != nil {
+			return err
+		}
+
+		return c.JSON(http.StatusOK, LogList{
+			Logs: logs,
+		})
 	})
 
 	e.POST("/logs", func(c echo.Context) error {

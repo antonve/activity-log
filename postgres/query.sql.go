@@ -37,7 +37,7 @@ func (q *Queries) CreateLog(ctx context.Context, arg CreateLogParams) error {
 
 const listLogs = `-- name: ListLogs :many
 select id, content, category, done_at from logs
-order by created_at desc
+order by done_at desc
 `
 
 func (q *Queries) ListLogs(ctx context.Context) ([]Log, error) {
