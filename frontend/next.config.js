@@ -1,14 +1,19 @@
-const API_ROOT_URL = process.env.API_ROOT_URL
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
+
   async rewrites() {
-    return [
-      {
-        source: '/api/v1/:path*',
-        destination: `${API_ROOT_URL}/:path*`,
-      },
-    ]
+    // On production the api gateway will take care of this
+    if (process.env.NODE_ENV !== 'production') {
+      return [
+        {
+          source: '/api/v1/:path*',
+          destination: `http://localhost:8080/:path*`,
+        },
+      ]
+    }
+
+    return []
   },
 }
 
