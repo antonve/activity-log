@@ -3,7 +3,6 @@
 import {
   Log,
   NewLogSchema,
-  colorForCategory,
   styleForCategory,
   toIsoDate,
   useCreateLog,

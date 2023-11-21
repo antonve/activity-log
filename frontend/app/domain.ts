@@ -2,8 +2,7 @@ import { useMutation, useQuery } from 'react-query'
 import { v4 } from 'uuid'
 import { z } from 'zod'
 
-// TODO: configure config
-const root = `http://localhost:8080`
+const root = `/api/v1`
 
 export const Log = z.object({
   id: z.string(),
