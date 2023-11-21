@@ -31,4 +31,4 @@ COPY --chown=0:0 --from=builder /dist /
 # User ID 65534 is usually user 'nobody'.
 USER 65534
 
-ENTRYPOINT ["/app"]
+ENTRYPOINT ["app"]
