@@ -3,6 +3,8 @@
 import {
   Log,
   NewLogSchema,
+  colorForCategory,
+  styleForCategory,
   toIsoDate,
   useCreateLog,
   useDeleteLog,
@@ -49,7 +51,12 @@ export default function LogRow({
         {toIsoDate(log.done_at)}
       </div>
       <div className="w-20 py-2 flex items-center">
-        <span className="rounded bg-stone-300 px-2 py-1">{log.category}</span>
+        <span
+          className="rounded bg-stone-300 px-2 py-1"
+          style={styleForCategory(log.category)}
+        >
+          {log.category}
+        </span>
       </div>
       <div className="px-4 py-2 flex-grow flex space-x-4 items-center">
         <div className="flex-grow">{log.content}</div>

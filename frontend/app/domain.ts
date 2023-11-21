@@ -90,3 +90,19 @@ export const useDeleteLog = (onSuccess: () => void) =>
     },
     onSuccess,
   })
+
+const categoryColors: Record<string, [string, string]> = {
+  indeed: ['#003A9B', '#ffffff'],
+}
+export function styleForCategory(category: string) {
+  if (!categoryColors[category]) {
+    return {}
+  }
+
+  const [backgroundColor, color] = categoryColors[category]
+
+  return {
+    backgroundColor,
+    color,
+  }
+}
