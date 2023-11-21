@@ -1,9 +1,6 @@
 name: build-backend
 on:
   push:
-    paths:
-      - ".github/workflows/build-backend.yaml"
-      - "!frontend/**"
 jobs:
   publish:
     name: Publish Image
